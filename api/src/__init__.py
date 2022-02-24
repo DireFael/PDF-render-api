@@ -12,8 +12,8 @@ def create_app():
     app = Flask(__name__)
 
     # Possible to expand - Using config loader
-    #app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:toor@db:5432/rossum"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:toor@localhost/rossum"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:toor@db:5432/rossum"
+    #app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:toor@localhost/rossum"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
     swagger_url = '/doc'

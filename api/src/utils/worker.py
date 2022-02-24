@@ -15,8 +15,8 @@ PDF_DIR_PATH = os.path.join(os.path.abspath(os.getcwd()),"data", "pdf")
 IMG_DIR_PATH = os.path.join(os.path.abspath(os.getcwd()), "data", "img")
 
 # Possible to change - define in config to better operating with
-#broker = RabbitmqBroker(url="amqp://guest:guest@broker:5672")
-broker = RabbitmqBroker(url="amqp://guest:guest@localhost:5672")
+broker = RabbitmqBroker(url="amqp://guest:guest@broker:5672")
+#broker = RabbitmqBroker(url="amqp://guest:guest@localhost:5672")
 dramatiq.set_broker(broker)
 
 # Possible to change - better operation with individual PNG images
