@@ -1,0 +1,74 @@
+version: "3.7"
+
+services:
+
+  api:
+    build: ./api
+    container_name: api
+    restart: always
+#    command: uwsgi --ini app.ini
+    command: python app.py
+    volumes:
+      - ./api/data/:/app/data
+    ports:
+      - "5000:5000"
+    networks:
+      - internal-net
+#    expose:
+#      - 8080
+    depends_on:
+      - db
+      - broker
+  worker:
+    build: ./api
+    container_name: worker
+    restart: always
+    command: dramatiq src.utils.worker
+    volumes:
+      - ./api/data/:/app/data
+    networks:
+      - internal-net
+    depends_on:
+      - api
+      - broker
+      - db
+      - nginx
+
+  broker:
+    image: "rabbitmq:3-management-alpine"
+    container_name: broker
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - internal-net
+
+  db:
+    image: postgres:14.1-alpine
+    container_name: db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=toor
+      - POSTGRES_DB=rossum
+    ports:
+      - '5432:5432'
+    networks:
+      - internal-net
+#
+#  nginx:
+#    build: ./nginx
+#    container_name: nginx
+#    restart: always
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - api
+#      - broker
+
+networks:
+  internal-net:
+    name: "internal-net"

@@ -1,0 +1,12 @@
+dramatiq==1.12.3
+Flask==2.0.3
+Flask-SQLAlchemy==2.5.1
+flask-swagger-ui==3.36.0
+SQLAlchemy==1.4.31
+marshmallow==3.14.1
+pdf2image==1.16.0
+pika==1.2.0
+psycopg2==2.9.3
+pytest==7.0.1
+Werkzeug==2.0.3
+uWSGI==2.0.20

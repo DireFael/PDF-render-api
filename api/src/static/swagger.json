@@ -1,0 +1,239 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "API for render PNG files from PDF file",
+    "version": "1.0.0",
+    "title": "Documentation for PDF render API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "tags": [
+    {
+      "name": "PDF render API",
+      "description": "API for render PNG files from PDF file"
+    }
+  ],
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "id": {
+        "properties": {
+          "uuid": {
+            "type": "integer"
+          }
+        }
+      },
+      "ImageSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "src": {
+            "type": "string"
+          },
+          "postion": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "src",
+          "postion"
+        ]
+      },
+      "ImageFullSchema": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties":{
+          "$ref": "#/components/schemas/ImageSchema"
+        }
+      },
+      "ListImagesFullSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ImageFullSchema"
+        }
+      },
+      "ListImagesSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ImageSchema"
+        }
+      },
+      "DocumentSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "page_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "page_count"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/upload": {
+      "post": {
+        "tags": [
+          "Upload file Request"
+        ],
+        "summary": "Upload to PDF file into system",
+        "requestBody": {
+          "description": "Document Post Request Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "422": {
+            "description": "Invalid Argument - Failed. One of message: Expected just one file. Unsupported file type. Supported file type. No file provided."
+          }
+        }
+      }
+    },
+    "/document/{id}": {
+      "get": {
+        "tags": [
+          "Document Request"
+        ],
+        "summary": "Get info about document with given ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Document ID obtained after uploading",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/DocumentSchema"
+            }
+          },
+          "404": {
+            "description": "Failed. Data for document with id not found!"
+          },
+          "422": {
+            "description": "Failed. Parameter id is not a number."
+          }
+        }
+      }
+    },
+    "/document/{id}/images": {
+      "get": {
+        "tags": [
+          "Document Request"
+        ],
+        "summary": "Get list rendered images and information about them related to document with given ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Document ID obtained after uploading",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/ListImagesFullSchema"
+            }
+          },
+          "404": {
+            "description": "Failed. Images for document with document_id not found!"
+          },
+          "422": {
+            "description": "Failed. Parameter id is not a number."
+          }
+        }
+      }
+    },
+    "/document/image/{id}": {
+      "get": {
+        "tags": [
+          "Document Request"
+        ],
+        "summary": "Get binary data (to download) image with given ID ",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "Image ID obtained after calling resource /document/{id}/images",
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Failed. Image with image_id not found! or Data for document with document_id not found!"
+          },
+          "422": {
+            "description": "Failed. Parameter id is not a number."
+          }
+        }
+      }
+    }
+  }
+}
